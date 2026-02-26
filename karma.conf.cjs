@@ -1,0 +1,32 @@
+module.exports = function (config) {
+  config.set({
+    basePath: '',
+    frameworks: ['jasmine', '@angular-devkit/build-angular'],
+    plugins: [
+      require('karma-jasmine'),
+      require('karma-jsdom-launcher'),
+      require('karma-coverage'),
+      require('karma-jasmine-html-reporter'),
+      require('@angular-devkit/build-angular/plugins/karma')
+    ],
+    client: {
+      jasmine: {},
+      clearContext: false
+    },
+    jasmineHtmlReporter: {
+      suppressAll: true
+    },
+    coverageReporter: {
+      dir: require('path').join(__dirname, './coverage/banking-frontend'),
+      subdir: '.',
+      reporters: [{ type: 'html' }, { type: 'text-summary' }]
+    },
+    reporters: ['progress', 'kjhtml'],
+    browsers: ['jsdom'],
+    browserNoActivityTimeout: 120000,
+    browserDisconnectTimeout: 10000,
+    browserDisconnectTolerance: 2,
+    captureTimeout: 120000,
+    restartOnFileChange: true
+  });
+};

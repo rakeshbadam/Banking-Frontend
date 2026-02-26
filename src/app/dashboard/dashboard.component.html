@@ -1,0 +1,162 @@
+<!-- dashboard.component.html -->
+<div class="page-wrapper">
+
+  <div class="table-card">
+
+    <div class="tab-bar">
+      <button class="tab" [class.active]="currentStatus === 'ALL'" (click)="setStatus('ALL')">
+        All
+        <span class="tab-count" [class.active-count]="currentStatus === 'ALL'">{{ allRequests.length }}</span>
+      </button>
+
+      <button class="tab" [class.active]="currentStatus === 'PENDING'" (click)="setStatus('PENDING')">
+        Pending
+        <span class="tab-count pending">{{ getPendingCount() }}</span>
+      </button>
+
+      <button class="tab" [class.active]="currentStatus === 'PROCESSING'" (click)="setStatus('PROCESSING')">
+        Processing
+        <span class="tab-count processing">{{ getProcessingCount() }}</span>
+      </button>
+
+      <button class="tab" [class.active]="currentStatus === 'SUCCESS'" (click)="setStatus('SUCCESS')">
+        Success
+        <span class="tab-count success">{{ getSuccessCount() }}</span>
+      </button>
+
+      <button class="tab" [class.active]="currentStatus === 'FAILED'" (click)="setStatus('FAILED')">
+        Failed
+        <span class="tab-count failed">{{ getFailedCount() }}</span>
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading requests...</p>
+    </div>
+
+    <table class="loan-table" *ngIf="!loading && requests.length > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Customer</th>
+          <th>Status</th>
+          <th>File / Income</th> <!-- updated label -->
+          <th>Created</th>
+          <th>Processed</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of requests">
+          <td class="id-cell">{{ r.id }}</td>
+
+          <!-- Customer + phone fallback -->
+          <td>
+            <div>
+              {{ r.customerId || r.name }}
+              <div *ngIf="r.phoneNumber" style="font-size:11px;color:#9ca3af;">
+                {{ r.phoneNumber }}
+              </div>
+            </div>
+          </td>
+
+          <td>
+            <div class="status-cell">
+              <span class="status-badge"
+                    [ngClass]="{
+                      'pending': r.status === 'PENDING',
+                      'processing': r.status === 'PROCESSING',
+                      'success': r.status === 'SUCCESS',
+                      'failed':  r.status === 'FAILED'
+                    }">
+                <span class="dot"></span>
+                {{ r.status }}
+              </span>
+
+              <button *ngIf="r.status === 'SUCCESS' && r.customerId !== undefined"
+                      (click)="loadAnalytics(r.customerId)"
+                      class="analytics-btn">
+                View Analytics
+              </button>
+            </div>
+          </td>
+
+          <!-- File or Income -->
+          <td class="file-cell">
+            {{ r.filePath || (r.income ? ('$' + r.income) : '') }}
+          </td>
+
+          <!-- Created -->
+          <td class="time-cell">
+            {{ r.createdAt || r.createdTime }}
+          </td>
+
+          <!-- Processed -->
+          <td class="time-cell">
+            {{ r.processedAt || r.modifiedTime }}
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && requests.length === 0" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <p>No {{ currentStatus === 'ALL' ? '' : currentStatus.toLowerCase() + ' ' }}requests found.</p>
+    </div>
+
+  </div>
+
+  <!-- Analytics Card (UNCHANGED) -->
+  <div *ngIf="selectedCustomerId" class="analytics-card">
+    <div class="analytics-header">
+      <div>
+        <div class="analytics-label">Customer Analytics</div>
+        <div class="analytics-title">Customer #{{ selectedCustomerId }}</div>
+      </div>
+      <span class="live-badge">● Live</span>
+    </div>
+
+    <div *ngIf="analyticsLoading" class="analytics-loading">
+      <div class="spinner small"></div>
+      <span>Loading analytics...</span>
+    </div>
+
+    <div *ngIf="!analyticsLoading" class="metrics-grid">
+
+      <div class="metric-item">
+        <div class="metric-label">Debt-to-Income Ratio</div>
+        <div class="metric-value">
+          {{ dti !== null ? dti : '—' }}
+          <span class="unit" *ngIf="dti !== null">%</span>
+        </div>
+        <div *ngIf="dtiRisk" class="risk-badge"
+             [ngClass]="{
+               'low': dtiRisk === 'LOW',
+               'medium': dtiRisk === 'MEDIUM',
+               'high': dtiRisk === 'HIGH'
+             }">
+          {{ dtiRisk }}
+        </div>
+      </div>
+
+      <div class="metric-item">
+        <div class="metric-label">Credit Utilization</div>
+        <div class="metric-value">
+          {{ creditUtilization !== null ? creditUtilization : '—' }}
+          <span class="unit" *ngIf="creditUtilization !== null">%</span>
+        </div>
+        <div *ngIf="creditRisk" class="risk-badge"
+             [ngClass]="{
+               'low': creditRisk === 'LOW',
+               'medium': creditRisk === 'MEDIUM',
+               'high': creditRisk === 'HIGH'
+             }">
+          {{ creditRisk }}
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>

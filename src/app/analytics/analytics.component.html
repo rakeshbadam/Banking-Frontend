@@ -1,0 +1,78 @@
+<div class="analytics-container">
+
+  <h2>Customer Analytics</h2>
+
+  <!-- Input Section -->
+  <form class="input-section" (ngSubmit)="loadAnalytics()">
+    <input
+      type="number"
+      name="customerId"
+      placeholder="Enter Customer ID"
+      [(ngModel)]="customerId"
+      required
+    />
+    <button type="submit">Load Analytics</button>
+  </form>
+
+  <!-- ================= CARDS ================= -->
+  <div *ngIf="dti !== null" class="cards">
+
+    <!-- DTI Card -->
+    <div class="card">
+      <h3>Debt-To-Income Ratio</h3>
+      <p class="value">{{ dti | number:'1.2-2' }} %</p>
+
+      <span *ngIf="riskCategory"
+            class="risk-badge"
+            [ngClass]="{
+              'low': riskCategory === 'LOW',
+              'medium': riskCategory === 'MEDIUM',
+              'high': riskCategory === 'HIGH'
+            }">
+        {{ riskCategory }}
+      </span>
+    </div>
+
+    <!-- Credit Utilization Card -->
+    <div class="card">
+      <h3>Credit Utilization</h3>
+      <p class="value">{{ creditUtilization | number:'1.2-2' }} %</p>
+    </div>
+
+  </div>
+
+  <!-- ================= WEEKLY SUMMARY ================= -->
+  <div *ngIf="weeklySummary.length > 0" class="weekly-section">
+
+    <h3>Weekly Summary</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Week Start</th>
+          <th>Total Income</th>
+          <th>Total Debits</th>
+          <th>Total EMI</th>
+          <th>Net Flow</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let week of weeklySummary">
+          <td>{{ week.weekStart }}</td>
+          <td>{{ week.totalIncome | number:'1.2-2' }}</td>
+          <td>{{ week.totalDebits | number:'1.2-2' }}</td>
+          <td>{{ week.totalEmi | number:'1.2-2' }}</td>
+          <td>{{ week.netFlow | number:'1.2-2' }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- ================= CHART ================= -->
+    <div class="chart-container">
+      <canvas #weeklyChartCanvas></canvas>
+    </div>
+
+  </div>
+
+</div>

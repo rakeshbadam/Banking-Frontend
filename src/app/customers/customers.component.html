@@ -1,0 +1,98 @@
+<div class="customers-container">
+
+  <h2>Customers</h2>
+
+  <!-- 🔍 SEARCH -->
+  <div class="search-section">
+    <input type="number"
+           placeholder="Search by Customer ID"
+           [(ngModel)]="searchId" />
+
+    <button (click)="searchCustomer()">Search</button>
+    <button (click)="resetSearch()">Reset</button>
+  </div>
+
+  <!-- ➕ ADD BUTTON -->
+  <button class="add-btn" (click)="openAddForm()">Add Customer</button>
+
+  <!-- ================= TABLE ================= -->
+  <table *ngIf="customers.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Income</th>
+        <th>Phone</th>
+        <th>Created</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let customer of customers">
+        <td>{{ customer.customerId }}</td>
+        <td>{{ customer.customerName }}</td>
+        <td>{{ customer.email }}</td>
+        <td>{{ customer.income | number:'1.2-2' }}</td>
+        <td>{{ customer.phoneNumber }}</td>
+        <td>{{ customer.createdTime | date:'medium' }}</td>
+        <td>
+          <button (click)="openEditForm(customer)">Edit</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 🔁 LOAD MORE -->
+  <div class="load-section">
+    <button *ngIf="hasNext"
+            (click)="loadCustomers()"
+            [disabled]="loading">
+
+      {{ loading ? 'Loading...' : 'Load More' }}
+
+    </button>
+  </div>
+
+  <!-- ================= FORM ================= -->
+  <div *ngIf="showForm" class="form-section">
+
+    <h3>{{ editMode ? 'Edit Customer' : 'Add Customer' }}</h3>
+
+    <form (ngSubmit)="saveCustomer()">
+
+      <input type="text"
+             placeholder="Name"
+             [(ngModel)]="customerForm.customerName"
+             name="customerName"
+             required />
+
+      <input type="email"
+             placeholder="Email"
+             [(ngModel)]="customerForm.email"
+             name="email"
+             required />
+
+      <input type="number"
+             placeholder="Income"
+             [(ngModel)]="customerForm.income"
+             name="income"
+             required />
+
+      <input type="text"
+             placeholder="Phone"
+             [(ngModel)]="customerForm.phoneNumber"
+             name="phoneNumber"
+             required />
+
+      <div class="form-buttons">
+        <button type="submit">Save</button>
+        <button type="button" (click)="cancel()">Cancel</button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
