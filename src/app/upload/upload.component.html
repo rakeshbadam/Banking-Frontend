@@ -1,0 +1,12 @@
+<div style="padding:40px">
+
+  <h2>Upload Loan Document</h2>
+
+  <p>Loan ID: {{loanId}}</p>
+
+  <input type="file" (change)="onFileSelected($event)" />
+  <br><br>
+
+  <button (click)="upload()">Upload</button>
+
+</div>

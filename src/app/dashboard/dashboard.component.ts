@@ -1,33 +1,27 @@
-// dashboard.component.ts
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 
-/* ✅ ADDED — Interface (DO NOT REMOVE) */
 export interface LoanRequest {
   id: number;
-
-  // Existing fields (from normal loan APIs)
   customerId?: number;
   filePath?: string;
   createdAt?: string;
   processedAt?: string;
-
-  // Processing & Non-existing APIs
   name?: string;
   income?: number;
   phoneNumber?: string;
   createdTime?: string;
   modifiedTime?: string;
-
   status: string;
 }
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
@@ -40,12 +34,14 @@ export class DashboardComponent implements OnInit {
   currentStatus: string = 'ALL';
   loading: boolean = false;
 
-  selectedCustomerId: number | null = null;
-  dti: number | null = null;
-  creditUtilization: number | null = null;
-  dtiRisk: string | null = null;
-  creditRisk: string | null = null;
-  analyticsLoading: boolean = false;
+  /* ================= NEW FORM FIELDS ================= */
+  isExistingCustomer: boolean = true;
+  newCustomerId!: number;
+  newName!: string;
+  newPhone!: string;
+  newIncome!: number;
+  formSuccess: string = '';
+  formError: string = '';
 
   constructor(private http: HttpClient) {}
 
@@ -53,28 +49,84 @@ export class DashboardComponent implements OnInit {
     this.fetchAllRequests();
   }
 
+  /* ================= SUBMIT LOGIC ================= */
+  submitLoanRequest(): void {
+
+    this.formSuccess = '';
+    this.formError = '';
+
+    if (this.isExistingCustomer) {
+
+      if (!this.newCustomerId) {
+        this.formError = 'Customer ID is required';
+        return;
+      }
+
+      this.http.post(`${this.BASE}/api/loan-request/${this.newCustomerId}`, {})
+        .subscribe({
+          next: () => {
+            this.formSuccess = 'Loan request created successfully';
+            this.fetchAllRequests();
+          },
+          error: (err) => {
+            this.formError = err.error?.message || 'Failed to create loan request';
+          }
+        });
+
+    } else {
+
+      if (!this.newName || !this.newPhone || !this.newIncome) {
+        this.formError = 'All fields are required';
+        return;
+      }
+
+      const body = {
+        name: this.newName,
+        phoneNumber: this.newPhone,
+        income: this.newIncome
+      };
+
+      this.http.post(`${this.BASE}/api/non-existing-loan-applications`, body)
+        .subscribe({
+          next: () => {
+            this.formSuccess = 'Loan request created successfully';
+            this.fetchAllRequests();
+          },
+          error: (err) => {
+            this.formError = err.error?.message || 'Failed to create loan request';
+          }
+        });
+    }
+  }
+
+  /* ================= DELETE AUTO-DETECT ================= */
+  deleteRequest(r: LoanRequest): void {
+
+    if (r.customerId !== undefined) {
+      // existing
+      this.http.delete(`${this.BASE}/api/loan-request/${r.id}`)
+        .subscribe(() => this.fetchAllRequests());
+    } else {
+      // non-existing
+      this.http.delete(`${this.BASE}/api/non-existing-loan-applications/${r.id}`)
+        .subscribe(() => this.fetchAllRequests());
+    }
+  }
+
+  /* ================= ORIGINAL METHODS UNCHANGED ================= */
   fetchAllRequests(): void {
+
     this.loading = true;
 
     forkJoin({
-      // Existing loan request APIs
       pending: this.http.get<LoanRequest[]>(`${this.BASE}/api/loan-request/pending`),
       success: this.http.get<LoanRequest[]>(`${this.BASE}/api/loan-request/status/SUCCESS`),
       failed:  this.http.get<LoanRequest[]>(`${this.BASE}/api/loan-request/status/FAILED`),
-
-      // ✅ ADD THIS — Non-existing pending API
-      pendingNonExisting: this.http.get<any[]>(
-        `${this.BASE}/api/non-existing-loan-applications/pending`
-      ),
-
-      // Existing processing API
-      processing: this.http.get<any[]>(
-        `${this.BASE}/api/non-existing-loan-applications/status/PROCESSING`
-      )
+      pendingNonExisting: this.http.get<any[]>(`${this.BASE}/api/non-existing-loan-applications/pending`),
+      processing: this.http.get<any[]>(`${this.BASE}/api/non-existing-loan-applications/status/PROCESSING`)
     }).subscribe({
       next: ({ pending, success, failed, pendingNonExisting, processing }) => {
 
-        // 🔥 Map non-existing pending into LoanRequest format
         const mappedPendingNonExisting: LoanRequest[] = pendingNonExisting.map(p => ({
           id: p.id,
           name: p.name,
@@ -85,7 +137,6 @@ export class DashboardComponent implements OnInit {
           modifiedTime: p.modifiedTime
         }));
 
-        // 🔥 Map processing into LoanRequest format
         const mappedProcessing: LoanRequest[] = processing.map(p => ({
           id: p.id,
           name: p.name,
@@ -96,7 +147,6 @@ export class DashboardComponent implements OnInit {
           modifiedTime: p.modifiedTime
         }));
 
-        // ✅ Combine everything
         this.allRequests = [
           ...pending,
           ...mappedPendingNonExisting,
@@ -108,8 +158,7 @@ export class DashboardComponent implements OnInit {
         this.applyFilter();
         this.loading = false;
       },
-      error: (err) => {
-        console.error('Failed to load loan requests', err);
+      error: () => {
         this.loading = false;
       }
     });
@@ -124,9 +173,7 @@ export class DashboardComponent implements OnInit {
     if (this.currentStatus === 'ALL') {
       this.requests = this.allRequests;
     } else {
-      this.requests = this.allRequests.filter(
-        r => r.status === this.currentStatus
-      );
+      this.requests = this.allRequests.filter(r => r.status === this.currentStatus);
     }
   }
 
@@ -144,31 +191,5 @@ export class DashboardComponent implements OnInit {
 
   getFailedCount(): number {
     return this.allRequests.filter(r => r.status === 'FAILED').length;
-  }
-
-  loadAnalytics(customerId: number): void {
-    this.selectedCustomerId = customerId;
-    this.analyticsLoading = true;
-    this.dti = null;
-    this.creditUtilization = null;
-    this.dtiRisk = null;
-    this.creditRisk = null;
-
-    forkJoin({
-      dti: this.http.get<any>(`${this.BASE}/api/analytics/customer/${customerId}/dti`),
-      creditUtilization: this.http.get<any>(`${this.BASE}/api/analytics/customer/${customerId}/credit-utilization`)
-    }).subscribe({
-      next: ({ dti, creditUtilization }) => {
-        this.dti = dti.value;
-        this.creditUtilization = creditUtilization.value;
-        this.dtiRisk = dti.riskCategory;
-        this.creditRisk = creditUtilization.riskCategory;
-        this.analyticsLoading = false;
-      },
-      error: (err) => {
-        console.error('Failed to load analytics', err);
-        this.analyticsLoading = false;
-      }
-    });
   }
 }

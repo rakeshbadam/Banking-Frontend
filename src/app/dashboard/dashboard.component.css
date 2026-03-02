@@ -412,3 +412,294 @@
 .status-badge.processing .dot {
   background: #0ea5e9;
 }
+/* ================= PAGE WRAPPER ================= */
+
+.page-wrapper {
+  padding: 30px;
+  background-color: #f3f4f6;
+  min-height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+/* ================= CARD STYLE ================= */
+
+.table-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  margin-bottom: 25px;
+}
+
+/* ================= NEW LOAN REQUEST FORM ================= */
+
+.table-card h3 {
+  font-size: 18px;
+  margin-bottom: 18px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.table-card label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.input-box {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  font-size: 14px;
+  transition: 0.2s ease;
+  width: 220px;
+}
+
+.input-box:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+}
+
+.submit-btn {
+  margin-top: 15px;
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: none;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.submit-btn:hover {
+  background-color: #1e40af;
+}
+
+.success-msg {
+  margin-top: 10px;
+  color: #16a34a;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.error-msg {
+  margin-top: 10px;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* ================= TAB BAR ================= */
+
+.tab-bar {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 8px 0;
+  cursor: pointer;
+  font-weight: 500;
+  color: #6b7280;
+  position: relative;
+}
+
+.tab.active {
+  color: #111827;
+  font-weight: 600;
+}
+
+.tab.active::after {
+  content: '';
+  height: 2px;
+  width: 100%;
+  background-color: #2563eb;
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+}
+
+.tab-count {
+  background: #e5e7eb;
+  border-radius: 20px;
+  padding: 3px 8px;
+  font-size: 12px;
+  margin-left: 6px;
+}
+
+.pending { background: #fde68a; }
+.processing { background: #bfdbfe; }
+.success { background: #bbf7d0; }
+.failed { background: #fecaca; }
+
+/* ================= TABLE ================= */
+
+.loan-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.loan-table th {
+  text-align: left;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #9ca3af;
+  padding: 12px 8px;
+}
+
+.loan-table td {
+  padding: 14px 8px;
+  border-top: 1px solid #f1f5f9;
+  font-size: 14px;
+  color: #374151;
+}
+
+.loan-table tr:hover {
+  background-color: #f9fafb;
+}
+
+/* ================= STATUS BADGE ================= */
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.status-badge.pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.status-badge.processing {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-badge.success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-badge.failed {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* ================= DELETE BUTTON ================= */
+
+.delete-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  background-color: #ef4444;
+  color: white;
+  font-size: 12px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #b91c1c;
+}
+
+/* ================= LOADING ================= */
+
+.loading-state {
+  text-align: center;
+  padding: 30px;
+  color: #6b7280;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e5e7eb;
+  border-top: 3px solid #2563eb;
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ================= EMPTY STATE ================= */
+
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: #6b7280;
+}
+
+.empty-icon {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+/* ================= ACTION BUTTON BASE ================= */
+
+.action-btn {
+  padding: 8px 18px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  min-width: 110px;
+}
+
+/* ================= APPROVE ================= */
+
+.approve-btn {
+  background-color: #0f172a;
+  color: #ffffff;
+}
+
+.approve-btn:hover {
+  background-color: #1e293b;
+  transform: translateY(-1px);
+}
+
+/* ================= ESCALATE (FIXED PROPERLY) ================= */
+
+.escalate-btn {
+  background-color: #334155;  /* darker slate to match theme */
+  color: #ffffff;
+}
+
+.escalate-btn:hover {
+  background-color: #475569;
+  transform: translateY(-1px);
+}
+
+/* ================= REJECT ================= */
+
+.reject-btn {
+  background-color: #111827;
+  color: #ffffff;
+}
+
+.reject-btn:hover {
+  background-color: #1f2937;
+  transform: translateY(-1px);
+}
+
+/* ================= BUTTON GROUP ALIGNMENT ================= */
+
+.actions-cell {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}

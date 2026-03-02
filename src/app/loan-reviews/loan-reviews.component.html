@@ -1,3 +1,121 @@
-<p>loan-reviews works!</p>
-<h2>Loan Reviews</h2>
-<p>Pending and processed loan requests will appear here.</p>
+<div class="page">
+  <h1>Loan Reviews</h1>
+
+  <div class="toolbar">
+    <input class="input" [(ngModel)]="reviewerName" placeholder="Reviewer Name" />
+    <button class="btn secondary" (click)="refreshAll()">Refresh</button>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="section-title">Ready For Review (SUCCESS)</div>
+  <div *ngIf="successLoans.length === 0" class="empty">No SUCCESS records found.</div>
+
+  <div *ngIf="successLoans.length > 0" class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Customer</th><th>Start</th><th>End</th><th>Status</th><th>CSV</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of successLoans">
+          <td>{{ row.id }}</td>
+          <td>{{ row.customerId }}</td>
+          <td>{{ formatDate(row.startDate) }}</td>
+          <td>{{ formatDate(row.endDate) }}</td>
+          <td><span class="badge success">{{ row.status }}</span></td>
+          <td><a class="btn link" [href]="getS3Url(row.filePath)" target="_blank">Download</a></td>
+          <td><button class="btn" (click)="startReview(row.id)">Start Review</button></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- UNDER REVIEW -->
+  <div class="section-title">Under Review Queue</div>
+  <div *ngIf="reviewQueue.length === 0" class="empty">No UNDER_REVIEW items.</div>
+
+  <div *ngIf="reviewQueue.length > 0" class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Customer</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let row of reviewQueue">
+          <tr>
+            <td>{{ row.id }}</td>
+            <td>{{ row.customerId }}</td>
+            <td><span class="badge under">{{ row.status }}</span></td>
+            <td class="actions">
+              <button class="btn success" (click)="openAction(row.id,'APPROVED')">Approve</button>
+              <button class="btn secondary" (click)="openAction(row.id,'ESCALATED')">Escalate</button>
+              <button class="btn danger" (click)="openAction(row.id,'REJECTED')">Reject</button>
+            </td>
+          </tr>
+
+          <tr *ngIf="activeLoanId === row.id">
+            <td colspan="4">
+              <textarea class="input textarea" [(ngModel)]="actionReason"
+                placeholder="Enter reason"></textarea>
+              <div style="margin-top:10px;">
+                <button class="btn" (click)="submitAction(row.id)">Confirm</button>
+                <button class="btn secondary" (click)="cancelAction()">Cancel</button>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- APPROVED -->
+  <div class="section-title">Approved Loans</div>
+  <div *ngIf="approvedList.length === 0" class="empty">No APPROVED records.</div>
+  <div *ngIf="approvedList.length > 0" class="table-wrap">
+    <table>
+      <thead><tr><th>Loan ID</th><th>Reviewer</th><th>Date</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let row of approvedList">
+          <td>{{ row.loanRequestId }}</td>
+          <td>{{ row.reviewerName }}</td>
+          <td>{{ formatDate(row.createdAt) }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- REJECTED -->
+  <div class="section-title">Rejected Loans</div>
+  <div *ngIf="rejectedList.length === 0" class="empty">No REJECTED records.</div>
+  <div *ngIf="rejectedList.length > 0" class="table-wrap">
+    <table>
+      <thead><tr><th>Loan ID</th><th>Reviewer</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let row of rejectedList">
+          <td>{{ row.loanRequestId }}</td>
+          <td>{{ row.reviewerName }}</td>
+          <td>{{ row.notes }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ESCALATED -->
+  <div class="section-title">Escalated Loans</div>
+  <div *ngIf="escalatedList.length === 0" class="empty">No ESCALATED records.</div>
+  <div *ngIf="escalatedList.length > 0" class="table-wrap">
+    <table>
+      <thead><tr><th>Loan ID</th><th>Reviewer</th><th>Reason</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let row of escalatedList">
+          <td>{{ row.loanRequestId }}</td>
+          <td>{{ row.reviewerName }}</td>
+          <td>{{ row.escalationReason }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

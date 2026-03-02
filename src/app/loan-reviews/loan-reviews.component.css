@@ -1,0 +1,454 @@
+/* ===== Page Layout ===== */
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 22px;
+}
+
+h1 {
+  font-size: 34px;
+  font-weight: 700;
+  margin: 14px 0 18px;
+  color: #111827;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 28px 0 12px;
+  color: #111827;
+}
+
+/* ===== Toolbar / Filters ===== */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.input {
+  height: 38px;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  outline: none;
+  min-width: 240px;
+}
+
+.input:focus {
+  border-color: #111827;
+}
+
+/* ===== Buttons ===== */
+.btn {
+  height: 38px;
+  padding: 8px 14px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  background: #111827;        /* navy like Customers page buttons */
+  color: #ffffff;
+}
+
+.btn:hover {
+  opacity: 0.92;
+}
+
+.btn.secondary {
+  background: #374151;
+}
+
+.btn.success {
+  background: #0f172a; /* keep in same navy family */
+}
+
+.btn.danger {
+  background: #1f2937; /* still dark; matches theme */
+}
+
+.btn.link {
+  background: transparent;
+  color: #111827;
+  border: 1px solid #111827;
+}
+
+.btn.link:hover {
+  background: #111827;
+  color: #ffffff;
+}
+
+/* ===== Table ===== */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+thead th {
+  background: #111827;     /* same dark header like Customers table */
+  color: #ffffff;
+  text-align: left;
+  padding: 12px 12px;
+  font-weight: 700;
+  border: 1px solid #111827;
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 12px 12px;
+  border: 1px solid #e5e7eb;
+  color: #111827;
+  vertical-align: middle;
+}
+
+tbody tr:hover {
+  background: #f9fafb;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ===== Status Badge ===== */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #111827;
+  color: #111827;
+  background: #ffffff;
+}
+
+.badge.success {
+  border-color: #0f172a;
+  color: #0f172a;
+}
+
+.badge.under {
+  border-color: #374151;
+  color: #374151;
+}
+
+/* ===== Empty State ===== */
+.empty {
+  padding: 18px;
+  border: 1px dashed #d1d5db;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #4b5563;
+}
+/* ===== Action Panel ===== */
+.action-row {
+  background: #f9fafb;
+}
+
+.action-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 6px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+}
+
+.textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+.textarea {
+  min-height: 70px;
+  margin-top: 8px;
+  resize: vertical;
+}
+/* =========================
+   GLOBAL PAGE LAYOUT
+========================= */
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 34px 22px 60px;
+}
+
+h1 {
+  font-size: 40px;
+  font-weight: 800;
+  margin: 10px 0 22px;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 28px 0 12px;
+  color: #0f172a;
+}
+
+/* subtle divider line under section titles */
+.section-title::after {
+  content: "";
+  display: block;
+  height: 2px;
+  width: 90px;
+  margin-top: 8px;
+  background: #0f172a;
+  opacity: 0.12;
+  border-radius: 999px;
+}
+
+/* =========================
+   TOOLBAR
+========================= */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 22px rgba(15, 23, 42, 0.06);
+  margin-bottom: 22px;
+}
+
+.input {
+  height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  outline: none;
+  min-width: 260px;
+  background: #ffffff;
+  color: #0f172a;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input::placeholder {
+  color: #94a3b8;
+}
+
+.input:focus {
+  border-color: #0f172a;
+  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.10);
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.btn {
+  height: 42px;
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 700;
+  background: #0f172a;
+  color: #ffffff;
+  transition: transform 0.08s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
+}
+
+.btn:hover {
+  opacity: 0.95;
+  box-shadow: 0 10px 22px rgba(15, 23, 42, 0.16);
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn.secondary {
+  background: #334155;
+}
+
+.btn.success {
+  background: #0f172a;
+}
+
+.btn.danger {
+  background: #111827;
+}
+
+.btn.link {
+  height: auto;
+  padding: 8px 12px;
+  background: transparent;
+  color: #0f172a;
+  border: 1px solid #0f172a;
+  box-shadow: none;
+}
+
+.btn.link:hover {
+  background: #0f172a;
+  color: #ffffff;
+}
+
+/* =========================
+   TABLE WRAP + TABLE STYLES
+========================= */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 14px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: #ffffff;
+}
+
+thead th {
+  background: #0f172a;
+  color: #ffffff;
+  text-align: left;
+  padding: 14px 14px;
+  font-weight: 800;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+thead th:first-child {
+  border-top-left-radius: 14px;
+}
+
+thead th:last-child {
+  border-top-right-radius: 14px;
+}
+
+tbody td {
+  padding: 14px 14px;
+  border-bottom: 1px solid #eef2f7;
+  color: #0f172a;
+  vertical-align: middle;
+}
+
+tbody tr:hover td {
+  background: #f8fafc;
+}
+
+tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Actions column */
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   BADGES
+========================= */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  border: 1px solid #0f172a;
+  color: #0f172a;
+  background: #ffffff;
+}
+
+.badge.success {
+  border-color: rgba(15, 23, 42, 0.55);
+  color: #0f172a;
+}
+
+.badge.under {
+  border-color: rgba(51, 65, 85, 0.55);
+  color: #334155;
+}
+
+/* =========================
+   EMPTY STATES
+========================= */
+.empty {
+  padding: 18px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #475569;
+  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.04);
+}
+
+/* =========================
+   INLINE ACTION PANEL (reason box)
+========================= */
+.action-row {
+  background: #f8fafc;
+}
+
+.action-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+.textarea {
+  min-height: 76px;
+  resize: vertical;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 720px) {
+  .page {
+    padding: 22px 14px 44px;
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  .input {
+    min-width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .actions .btn {
+    width: auto;
+  }
+}
