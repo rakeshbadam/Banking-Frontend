@@ -24,62 +24,143 @@ export class AnalyticsComponent {
   riskCategory: string | null = null;
 
   weeklySummary: any[] = [];
+  transactions: any[] = [];
+
   chart: any;
 
-  private baseUrl = 'http://18.233.219.222:8080/api/analytics/customer';
+  searchKeyword: string = '';
+  loading: boolean = false;
+  analyticsLoaded: boolean = false;
+
+  private analyticsBaseUrl = 'http://18.233.219.222:8080/api/analytics/customer';
+  private transactionBaseUrl = 'http://18.233.219.222:8080/api/transactions';
 
   constructor(private http: HttpClient) {}
 
+  // =========================================
+  // FINAL STABLE LOAD METHOD
+  // =========================================
+
   loadAnalytics() {
+
     if (!this.customerId) return;
 
-    // Reset
+    this.loading = true;
+    this.analyticsLoaded = true;
+
+    // Reset everything
     this.dti = null;
     this.creditUtilization = null;
     this.riskCategory = null;
     this.weeklySummary = [];
+    this.transactions = [];
 
     if (this.chart) {
       this.chart.destroy();
     }
 
-    // ✅ DTI
-    this.http.get<any>(`${this.baseUrl}/${this.customerId}/dti`)
+    let pendingRequests = 3;
+    const markRequestDone = () => {
+      pendingRequests -= 1;
+      if (pendingRequests === 0) {
+        this.loading = false;
+      }
+    };
+
+    this.http.get<any>(`${this.analyticsBaseUrl}/${this.customerId}/dti`)
       .subscribe({
         next: res => {
-          this.dti = res.value;
-          this.riskCategory = res.riskCategory;
+          this.dti = res?.value ?? null;
+          this.riskCategory = res?.riskCategory ?? null;
+          markRequestDone();
         },
-        error: err => console.error('DTI Error:', err)
+        error: err => {
+          console.error('DTI Error:', err);
+          markRequestDone();
+        }
       });
 
-    // ✅ Credit Utilization
-    this.http.get<any>(`${this.baseUrl}/${this.customerId}/credit-utilization`)
+    this.http.get<any>(`${this.analyticsBaseUrl}/${this.customerId}/credit-utilization`)
       .subscribe({
         next: res => {
-          this.creditUtilization = res.value;
+          this.creditUtilization = res?.value ?? null;
+          markRequestDone();
         },
-        error: err => console.error('CU Error:', err)
+        error: err => {
+          console.error('CU Error:', err);
+          markRequestDone();
+        }
       });
 
-    // ✅ Weekly Summary
-    this.http.get<any[]>(`${this.baseUrl}/${this.customerId}/weekly-summary`)
+    this.http.get<any[]>(`${this.analyticsBaseUrl}/${this.customerId}/weekly-summary`)
       .subscribe({
         next: res => {
-          this.weeklySummary = res;
-
-          // Small timeout ensures canvas is rendered
+          this.weeklySummary = res ?? [];
           setTimeout(() => {
             this.createChart();
           }, 100);
+          markRequestDone();
         },
-        error: err => console.error('Weekly Error:', err)
+        error: err => {
+          console.error('Weekly Error:', err);
+          this.weeklySummary = [];
+          markRequestDone();
+        }
       });
+
+    this.loadCustomerTransactions();
   }
+
+  // =========================================
+  // LOAD TRANSACTIONS
+  // =========================================
+
+  loadCustomerTransactions() {
+    if (!this.customerId) return;
+
+    this.http.get<any[]>(
+      `${this.transactionBaseUrl}/customer/${this.customerId}`
+    ).subscribe({
+      next: res => {
+        this.transactions = res ?? [];
+      },
+      error: err => {
+        console.error('Transaction Load Error:', err);
+        this.transactions = [];
+      }
+    });
+  }
+
+  // =========================================
+  // SEARCH TRANSACTIONS
+  // =========================================
+
+  searchTransactions() {
+    if (!this.customerId || !this.searchKeyword.trim()) {
+      this.loadCustomerTransactions();
+      return;
+    }
+
+    this.http.get<any[]>(
+      `${this.transactionBaseUrl}/customer/${this.customerId}/search?keyword=${this.searchKeyword}`
+    ).subscribe({
+      next: res => {
+        this.transactions = res ?? [];
+      },
+      error: err => {
+        console.error('Search Error:', err);
+        this.transactions = [];
+      }
+    });
+  }
+
+  // =========================================
+  // CHART
+  // =========================================
 
   createChart() {
 
-    if (!this.weeklyChartCanvas) return;
+    if (!this.weeklyChartCanvas || this.weeklySummary.length === 0) return;
 
     const labels = this.weeklySummary.map(w => w.weekStart);
     const incomeData = this.weeklySummary.map(w => w.totalIncome);

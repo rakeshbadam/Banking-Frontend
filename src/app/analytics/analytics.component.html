@@ -2,7 +2,7 @@
 
   <h2>Customer Analytics</h2>
 
-  <!-- Input Section -->
+  <!-- ================= INPUT ================= -->
   <form class="input-section" (ngSubmit)="loadAnalytics()">
     <input
       type="number"
@@ -14,63 +14,110 @@
     <button type="submit">Load Analytics</button>
   </form>
 
-  <!-- ================= CARDS ================= -->
-  <div *ngIf="dti !== null" class="cards">
+  <hr>
 
-    <!-- DTI Card -->
-    <div class="card">
-      <h3>Debt-To-Income Ratio</h3>
-      <p class="value">{{ dti | number:'1.2-2' }} %</p>
+  <!-- ================= ANALYTICS SECTION ================= -->
+  <div *ngIf="analyticsLoaded">
 
-      <span *ngIf="riskCategory"
-            class="risk-badge"
-            [ngClass]="{
-              'low': riskCategory === 'LOW',
-              'medium': riskCategory === 'MEDIUM',
-              'high': riskCategory === 'HIGH'
-            }">
-        {{ riskCategory }}
-      </span>
+    <!-- ================= CARDS ================= -->
+    <div *ngIf="dti !== null" class="cards">
+
+      <div class="card">
+        <h3>Debt-To-Income Ratio</h3>
+        <p class="value">{{ dti | number:'1.2-2' }} %</p>
+
+        <span *ngIf="riskCategory"
+              class="risk-badge"
+              [ngClass]="{
+                'low': riskCategory === 'LOW',
+                'medium': riskCategory === 'MEDIUM',
+                'high': riskCategory === 'HIGH'
+              }">
+          {{ riskCategory }}
+        </span>
+      </div>
+
+      <div class="card">
+        <h3>Credit Utilization</h3>
+        <p class="value">{{ creditUtilization | number:'1.2-2' }} %</p>
+      </div>
+
     </div>
 
-    <!-- Credit Utilization Card -->
-    <div class="card">
-      <h3>Credit Utilization</h3>
-      <p class="value">{{ creditUtilization | number:'1.2-2' }} %</p>
+    <!-- ================= WEEKLY SUMMARY ================= -->
+    <div *ngIf="weeklySummary.length > 0" class="weekly-section">
+
+      <h3>Weekly Summary</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Week Start</th>
+            <th>Total Income</th>
+            <th>Total Debits</th>
+            <th>Total EMI</th>
+            <th>Net Flow</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let week of weeklySummary">
+            <td>{{ week.weekStart }}</td>
+            <td>{{ week.totalIncome | number:'1.2-2' }}</td>
+            <td>{{ week.totalDebits | number:'1.2-2' }}</td>
+            <td>{{ week.totalEmi | number:'1.2-2' }}</td>
+            <td>{{ week.netFlow | number:'1.2-2' }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="chart-container">
+        <canvas #weeklyChartCanvas></canvas>
+      </div>
+
     </div>
 
-  </div>
+    <!-- ================= TRANSACTIONS (NOW AT BOTTOM) ================= -->
 
-  <!-- ================= WEEKLY SUMMARY ================= -->
-  <div *ngIf="weeklySummary.length > 0" class="weekly-section">
+    <div class="transactions-section">
 
-    <h3>Weekly Summary</h3>
+      <h3>Customer Transactions</h3>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Week Start</th>
-          <th>Total Income</th>
-          <th>Total Debits</th>
-          <th>Total EMI</th>
-          <th>Net Flow</th>
-        </tr>
-      </thead>
+      <div class="search-section">
+        <input
+          type="text"
+          [(ngModel)]="searchKeyword"
+          placeholder="Search by description"
+        />
+        <button (click)="searchTransactions()">Search</button>
+      </div>
 
-      <tbody>
-        <tr *ngFor="let week of weeklySummary">
-          <td>{{ week.weekStart }}</td>
-          <td>{{ week.totalIncome | number:'1.2-2' }}</td>
-          <td>{{ week.totalDebits | number:'1.2-2' }}</td>
-          <td>{{ week.totalEmi | number:'1.2-2' }}</td>
-          <td>{{ week.netFlow | number:'1.2-2' }}</td>
-        </tr>
-      </tbody>
-    </table>
+      <table *ngIf="transactions.length > 0">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Account</th>
+            <th>Amount</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let t of transactions">
+            <td>{{ t.transactionId }}</td>
+            <td>{{ t.accountId }}</td>
+            <td>{{ t.amount }}</td>
+            <td>{{ t.transactionType }}</td>
+            <td>{{ t.description }}</td>
+            <td>{{ t.transactionDate | date:'short' }}</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <!-- ================= CHART ================= -->
-    <div class="chart-container">
-      <canvas #weeklyChartCanvas></canvas>
+      <div *ngIf="transactions.length === 0">
+        No transactions found.
+      </div>
+
     </div>
 
   </div>
